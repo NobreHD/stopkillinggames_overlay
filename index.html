@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stop Killing Games Overlay</title>
+
+  <meta name="description" content="How to install: in your OBS, create a new browser source and just paste the link and it should work out of the box.">
+  <meta name="author" content="NobreHD">
+  
+  <meta property="og:title" content="Stop Killing Games Overlay">
+  <meta property="og:description" content="How to install: in your OBS, create a new browser source and just paste the link and it should work out of the box.">
+  <meta property="og:image" content="https://skg-overlay.nobrehd.pt/images/logo.png">
+  <meta property="og:url" content="https://skg-overlay.nobrehd.pt/">
+  <meta property="og:site_name" content="Stop Killing Games Overlay">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:title" content="Stop Killing Games Overlay">
+  <meta name="twitter:description" content="How to install: in your OBS, create a new browser source and just paste the link and it should work out of the box.">
+  <meta name="twitter:image" content="https://skg-overlay.nobrehd.pt/images/logo.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@NobreHD">
+  <meta name="twitter:url" content="https://skg-overlay.nobrehd.pt">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+    .overlay {
+      width: 800px;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+    }
+
+    .overlay>div {
+      margin: 10px 0;
+    }
+
+    .rubik {
+      font-family: "Rubik", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: bold;
+      font-size: 32px;
+      font-style: normal;
+    }
+
+    .shadow{
+      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    }
+
+    .title {
+      text-align: center;
+    }
+
+    .progress {
+      width: 100%;
+      height: 40px;
+      position: relative;
+    }
+
+    .bar {
+      border-radius: 48px;
+      height: 40px;
+      background-color: rgba(128, 128, 128, 0.5);
+      width: 100%;
+    }
+
+    #progress_bar {
+      border-radius: 48px;
+      height: 40px;
+      background-color: rgba(0, 51, 102, 0.8);
+    }
+
+    .progress .text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      left: 20px;
+      right: 20px;
+      top: 0;
+    }
+    
+    #progress_text {
+      text-align: left;
+    }
+
+    .footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-direction: row;
+    }
+
+    .website {
+      border-radius: 48px;
+      height: 40px;
+      background-color: rgba(253, 203, 11, 0.9);
+      color: #1E448A;
+    }
+
+    .website span {
+      padding: 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay rubik">
+    <div class="title shadow">
+      <span>HELP US SAVE THE GAMES YOU LOVE<br>SIGN THE EU PETITION</span>
+    </div>
+    <div class="progress">
+      <div class="bar">
+        <div id="progress_bar" style="width: 69%"></div>
+      </div>
+      <div class="text">
+        <span id="progress_text">690 000</span>
+        <span>1 000 000</span>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="countdown shadow">
+        <span id="countdown_text">23 Days left</span>
+      </div>
+      <div class="website">
+        <span>StopKillingGames.com</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const progress_bar = document.getElementById("progress_bar");
+    const progress_text = document.getElementById("progress_text");
+    const countdown_text = document.getElementById("countdown_text");
+
+    const end_date = new Date("2025-07-31T21:59:59Z").getTime();
+
+    const formatWithSpaces = (num) => {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    const get_signatures = async () => {
+      let signature_count = await fetch("https://eci.ec.europa.eu/045/public/api/report/progression")
+        .then(res => res.json())
+        .then(data => data.signatureCount);
+
+      progress_text.innerHTML = formatWithSpaces(signature_count);
+
+      let percentage = (signature_count / 1000000) * 100;
+      percentage = Math.max(percentage, 0);
+      percentage = Math.min(percentage, 100);
+      progress_bar.style.width = percentage.toFixed(2) + "%";
+    }
+
+    const timeLeft = (ms) => {
+      if (ms <= 0) return 'Thank you, everyone!';
+    
+      const s = Math.floor(ms / 1000);
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+    
+      if (d > 0) return `${d} day${d > 1 ? 's' : ''} left`;
+      if (h > 0) return `${h} hour${h > 1 ? 's' : ''} left`;
+      if (m > 0) return `${m} minute${m > 1 ? 's' : ''} left`;
+      return `${sec} second${sec !== 1 ? 's' : ''} left`;
+    }
+
+
+    setTimeout(get_signatures, 5000);
+    setInterval(()=>{
+      let now = new Date().getTime();
+      let distance = end_date - now;
+      countdown_text.innerHTML = timeLeft(distance);
+    }, 1000)
+  </script>
+</body>
+</html>
