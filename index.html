@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stop Killing Games Overlay</title>
 
-  <meta name="description" content="How to install: in your OBS, create a new browser source and just paste the link and it should work out of the box.">
+  <meta name="description" content="How to install: in your OBS, create a new browser source and just copy and paste the link and it should work out of the box.">
   <meta name="author" content="NobreHD">
   
   <meta property="og:title" content="Stop Killing Games Overlay">
-  <meta property="og:description" content="How to install: in your OBS, create a new browser source and just paste the link and it should work out of the box.">
+  <meta property="og:description" content="How to install: in your OBS, create a new browser source and just copy and paste the link and it should work out of the box.">
   <meta property="og:image" content="https://skg-overlay.nobrehd.pt/images/logo.png">
   <meta property="og:url" content="https://skg-overlay.nobrehd.pt/">
   <meta property="og:site_name" content="Stop Killing Games Overlay">
   <meta property="og:type" content="website">
 
   <meta name="twitter:title" content="Stop Killing Games Overlay">
-  <meta name="twitter:description" content="How to install: in your OBS, create a new browser source and just paste the link and it should work out of the box.">
+  <meta name="twitter:description" content="How to install: in your OBS, create a new browser source and just copy and paste the link and it should work out of the box.">
   <meta name="twitter:image" content="https://skg-overlay.nobrehd.pt/images/logo.png">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:creator" content="@NobreHD">
@@ -56,6 +56,10 @@
 
     .title {
       text-align: center;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .progress {
@@ -110,12 +114,26 @@
     .website span {
       padding: 0 20px;
     }
+
+    .qr {
+      image-rendering: pixelated;
+      margin-right: 10px;
+    }
+
+    .qr img {
+      height: 110px;
+    }
   </style>
 </head>
 <body>
   <div class="overlay rubik">
     <div class="title shadow">
-      <span>HELP US SAVE THE GAMES YOU LOVE<br>SIGN THE EU PETITION</span>
+      <div class="qr">
+        <img src="./images/qr.png">
+      </div>
+      <div>
+        <span>HELP US SAVE THE GAMES YOU LOVE<br>SIGN THE EU PETITION</span>
+      </div>
     </div>
     <div class="progress">
       <div class="bar">
