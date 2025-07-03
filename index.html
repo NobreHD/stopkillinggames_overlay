@@ -123,6 +123,18 @@
     .qr img {
       height: 110px;
     }
+
+    #top_text > span:last-child {
+      display: none;
+    }
+
+    .milestone > span:first-child {
+      display: none;
+    }
+
+    .milestone > span:last-child {
+      display: inline !important;
+    }
   </style>
 </head>
 <body>
@@ -131,8 +143,9 @@
       <div class="qr">
         <img src="./images/qr.png?v=1">
       </div>
-      <div>
+      <div id="top_text">
         <span>HELP US SAVE THE GAMES YOU LOVE<br>SIGN THE EU PETITION</span>
+        <span>🎉 Milestone reached! 🎉<br>Keep signing to ensure we have a safety buffer!</span>
       </div>
     </div>
     <div class="progress">
@@ -141,7 +154,7 @@
       </div>
       <div class="text">
         <span id="progress_text">690 000</span>
-        <span>1 000 000</span>
+        <span id="goal_text">1 000 000</span>
       </div>
     </div>
     <div class="footer">
@@ -158,21 +171,29 @@
     const progress_bar = document.getElementById("progress_bar");
     const progress_text = document.getElementById("progress_text");
     const countdown_text = document.getElementById("countdown_text");
+    const goal_text = document.getElementById("goal_text");
+    const top_text = document.getElementById("top_text");
 
     const end_date = new Date("2025-07-31T21:59:59Z").getTime();
+    const safe_margin = 200000;
+    let goal = 1000000; 
+
+    let listener;
 
     const formatWithSpaces = (num) => {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     }
 
-    const get_signatures = async () => {
-      let signature_count = await fetch("https://eci.ec.europa.eu/045/public/api/report/progression")
-        .then(res => res.json())
-        .then(data => data.signatureCount);
+    const show_signatures = (count) => {
+      if (count > goal) {
+        top_text.classList.add("milestone")
+        goal += safe_margin;
+        goal_text.innerText = goal + "";
+      }
 
-      progress_text.innerHTML = formatWithSpaces(signature_count);
+      progress_text.innerText = formatWithSpaces(count);
 
-      let percentage = (signature_count / 1000000) * 100;
+      let percentage = (count / goal) * 100;
       percentage = Math.max(percentage, 0);
       percentage = Math.min(percentage, 100);
       progress_bar.style.width = percentage.toFixed(2) + "%";
@@ -193,8 +214,13 @@
       return `${sec} second${sec !== 1 ? 's' : ''} left`;
     }
 
+    window.onload = () => {
+      listener = new WebSocket("wss://stopkillinggames-production.up.railway.app/")
+      listener.onmessage = (event) => {
+        show_signatures(JSON.parse(event.data).signatureCount)
+      }
+    }
 
-    setInterval(get_signatures, 5000);
     setInterval(()=>{
       let now = new Date().getTime();
       let distance = end_date - now;
