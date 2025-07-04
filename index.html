@@ -73,12 +73,23 @@
       height: 40px;
       background-color: rgba(128, 128, 128, 0.5);
       width: 100%;
+      position: relative;
     }
 
     #progress_bar {
       border-radius: 48px;
       height: 40px;
-      background-color: rgba(0, 51, 102, 0.8);
+      background-color: rgb(0, 102, 204);
+    }
+
+    #goal_bar {
+      position: absolute;
+      left:0;
+      top:0;
+      z-index: 1;
+      border-radius: 48px 0 0 48px;
+      height: 40px;
+      backdrop-filter: hue-rotate(-120deg);
     }
 
     .progress .text {
@@ -90,6 +101,7 @@
       left: 20px;
       right: 20px;
       top: 0;
+      z-index: 2;
     }
     
     #progress_text {
@@ -124,6 +136,10 @@
       height: 110px;
     }
 
+    #top_text {
+      width: 585px;
+    }
+
     #top_text > span:last-child {
       display: none;
     }
@@ -151,6 +167,7 @@
     <div class="progress">
       <div class="bar">
         <div id="progress_bar" style="width: 69%"></div>
+        <div id="goal_bar"></div>
       </div>
       <div class="text">
         <span id="progress_text">690 000</span>
@@ -172,6 +189,7 @@
     const progress_text = document.getElementById("progress_text");
     const countdown_text = document.getElementById("countdown_text");
     const goal_text = document.getElementById("goal_text");
+    const goal_bar = document.getElementById("goal_bar")
     const top_text = document.getElementById("top_text");
 
     const end_date = new Date("2025-07-31T21:59:59Z").getTime();
@@ -184,19 +202,25 @@
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     }
 
+    const calculate_percentage = (count) => {
+      let percentage = (count / goal) * 100;
+      percentage = Math.max(percentage, 0);
+      percentage = Math.min(percentage, 100);
+      return percentage.toFixed(2) + "%";
+    }
+
     const show_signatures = (count) => {
       if (count > goal) {
-        top_text.classList.add("milestone")
+        setInterval(()=>{
+          top_text.classList.toggle("milestone")
+        }, 10000)
         goal += safe_margin;
+        goal_bar.style.width = calculate_percentage(goal - safe_margin)
         goal_text.innerText = goal + "";
       }
 
       progress_text.innerText = formatWithSpaces(count);
-
-      let percentage = (count / goal) * 100;
-      percentage = Math.max(percentage, 0);
-      percentage = Math.min(percentage, 100);
-      progress_bar.style.width = percentage.toFixed(2) + "%";
+      progress_bar.style.width = calculate_percentage(count);
     }
 
     const timeLeft = (ms) => {
