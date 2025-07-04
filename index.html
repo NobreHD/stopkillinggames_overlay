@@ -196,6 +196,7 @@
     const safe_margin = 200000;
     let goal = 1000000; 
 
+    let change_counter = false;
     let listener;
 
     const formatWithSpaces = (num) => {
@@ -215,11 +216,12 @@
           top_text.classList.toggle("milestone")
         }, 10000)
         goal += safe_margin;
+        change_counter = true;
         goal_bar.style.width = calculate_percentage(goal - safe_margin)
-        goal_text.innerText = goal + "";
+        goal_text.innerText = "";
       }
 
-      progress_text.innerText = formatWithSpaces(count);
+      progress_text.innerText = formatWithSpaces(count) + (change_counter ? " / " + formatWithSpaces(goal) : "");
       progress_bar.style.width = calculate_percentage(count);
     }
 
